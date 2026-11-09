@@ -1,160 +1,204 @@
-TeamFlow
+<div align="center">
 
-A lightweight team collaboration and task management application built with React, Express, and MongoDB.
+# TeamFlow
 
-TeamFlow helps small teams organize their work through shared workspaces, projects, and task boards.
+### A calmer way for small teams to organize work and keep projects moving.
 
-Features
-Authentication: User registration, login, and logout.
-Workspaces: Create and switch between workspaces.
-Team Management: Add and remove existing TeamFlow users from workspaces.
-Project Management: Create and organize projects within workspaces.
-Task Management: Create, edit, delete, and manage tasks.
-Kanban Board: Track tasks through To Do, In Progress, and Done stages.
-Task Assignment: Assign tasks to workspace members.
-Priority Management: Set Low, Medium, or High priority.
-Due Dates: Set and track task deadlines.
-Task Filtering: Filter tasks by status and assignee.
-Theme Support: Switch between light and dark themes.
-Technology Stack
-Area	Technology
-Frontend	React 19, Vite, JavaScript
-Backend	Node.js, Express 5
-Database	MongoDB, Mongoose
-Authentication	JWT, bcryptjs, HTTP-only cookies
-Validation	Zod
-Project Structure
-text
+[![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.19%2B%20%7C%2022.12%2B-5FA04E?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-5-111111?logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+
+[Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [Security](#security) · [Author](#author)
+
+</div>
+
+TeamFlow is a full-stack team task manager built with React, Express, and MongoDB. Create a workspace, organize projects on a Kanban board, and keep tasks, priorities, deadlines, and assignments together in one place.
+
+## Table of contents
+
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Technology stack](#technology-stack)
+- [Project structure](#project-structure)
+- [Requirements](#requirements)
+- [Getting started](#getting-started)
+- [Run the application](#run-the-application)
+- [Tests and build](#tests-and-build)
+- [Security](#security)
+- [Future improvements](#future-improvements)
+- [Author](#author)
+
+## Features
+
+- Account registration, sign-in, and sign-out.
+- Multiple workspaces, with the creator as the workspace owner.
+- Create projects within workspaces.
+- Create, edit, assign, and delete tasks.
+- Kanban workflow with **To Do**, **In Progress**, and **Done** statuses.
+- Task priorities, due dates, and filters for status and assignee.
+- Workspace owners can add or remove existing TeamFlow accounts. Removing a member unassigns their tasks in that workspace.
+- Light and dark themes, with the theme preference saved in the browser.
+- Workspace, project, member, and task data refresh automatically every 15 seconds while the app is open. Returning to the browser tab also triggers a refresh.
+
+Email delivery, invitation links, password reset, and workspace ownership transfer are not included in the current MVP. A member must have a TeamFlow account before an owner can add them to a workspace.
+
+## Screenshots
+
+The following screenshot is from the running TeamFlow application. It shows the project board and uses demonstration content; account and member details are excluded.
+
+![TeamFlow project board](docs/screenshots/teamflow-board.png)
+
+## Technology stack
+
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 19, Vite, JavaScript |
+| Backend | Node.js, Express 5 |
+| Database | MongoDB, Mongoose |
+| Authentication | JSON Web Tokens, bcryptjs, HTTP-only cookies |
+| Request validation | Zod |
+
+## Project structure
+
+```text
 TeamFlow/
-├── client/                 # React frontend
+├── client/
+│   ├── public/                 # Static frontend assets
 │   ├── src/
+│   │   ├── assets/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   └── index.css
+│   ├── index.html
 │   ├── package.json
 │   └── vite.config.js
-│
-├── server/                 # Express backend
+├── docs/
+│   └── screenshots/
+│       └── teamflow-board.png
+├── server/
 │   ├── src/
-│   │   ├── config/
-│   │   ├── middleware/
-│   │   ├── models/
-│   │   └── routes/
+│   │   ├── config/             # Database connection
+│   │   ├── middleware/         # Authentication and access checks
+│   │   ├── models/             # Mongoose models
+│   │   └── routes/             # API routes
 │   ├── .env.example
 │   └── package.json
-│
-├── package.json
+├── package.json                # Root development and validation scripts
 └── README.md
+```
 
-Requirements
-Node.js 20.19+ or 22.12+
-MongoDB (local or hosted)
-Getting Started
-1. Clone the repository
-bash
+## Requirements
+
+- Node.js **20.19+** or **22.12+**
+- MongoDB, running locally or available through a hosted service
+- npm (included with Node.js)
+
+## Getting started
+
+### 1. Clone the repository
+
+```sh
 git clone https://github.com/PatilAdhiraj/TeamFlow.git
 cd TeamFlow
+```
 
-2. Install dependencies
+### 2. Install dependencies
 
-Install frontend dependencies:
-
-bash
+```sh
 cd client
 npm install
-
-
-Install backend dependencies:
-
-bash
 cd ../server
 npm install
+cd ..
+```
 
-3. Configure environment variables
+### 3. Configure the API
 
-Copy the example environment file:
+Create `server/.env` from the example. If `server/.env` already exists, keep it and do not overwrite your local settings.
 
-bash
-cp .env.example .env
+PowerShell:
 
+```powershell
+Copy-Item -Path server\.env.example -Destination server\.env
+```
 
-Run this command from the server directory.
+macOS/Linux:
 
-Configure the following variables in server/.env:
+```sh
+cp server/.env.example server/.env
+```
 
-MONGODB_URI – MongoDB connection string.
-CLIENT_ORIGIN – Frontend origin.
-JWT_SECRET – A strong random secret of at least 32 characters.
+Set the following variables in `server/.env`:
 
-For the frontend, create client/.env only if you need to configure VITE_API_URL for a different API address.
+| Variable | Description |
+| --- | --- |
+| `PORT` | API port. Defaults to `4000`. |
+| `MONGODB_URI` | MongoDB connection string. |
+| `JWT_SECRET` | Random signing secret of at least 32 characters. |
+| `CLIENT_ORIGIN` | Exact frontend origin, such as `http://localhost:5173`. |
+| `NODE_ENV` | Use `development` locally and `production` when deployed. |
 
-Never commit actual environment files or credentials.
+The example file uses a local MongoDB address and a placeholder JWT value. Replace the placeholder with a strong, randomly generated secret before starting the API.
 
-4. Start the application
+The frontend defaults to `http://localhost:4000/api`. If your API is hosted elsewhere, create `client/.env` and set `VITE_API_URL` to the API base URL, including `/api`, for example `https://api.example.com/api`. Variables prefixed with `VITE_` are bundled into frontend code and are visible to users; never put secrets in frontend environment variables.
 
-Start the backend in one terminal:
+Keep real environment files and credentials out of Git. The repository `.gitignore` excludes `.env` files while allowing the placeholder `server/.env.example`.
 
-bash
+## Run the application
+
+Start the API and frontend in separate terminals from the project root.
+
+**Terminal 1 — API**
+
+```sh
 cd server
 npm run dev
+```
 
+**Terminal 2 — frontend**
 
-Start the frontend in another terminal:
-
-bash
+```sh
 cd client
 npm run dev
+```
 
+Open [http://localhost:5173](http://localhost:5173). By default, the API listens at `http://localhost:4000`.
 
-By default:
+## Tests and build
 
-Frontend: http://localhost:5173
-Backend: http://localhost:4000
+Run these commands from the project root:
 
-Open the frontend URL in your browser.
-
-5. Run checks
-
-From the project root:
-
-bash
+```sh
 npm run test:api
 npm run lint
 npm run build
+```
 
-Security
-Passwords are hashed using bcrypt.
-Authentication uses signed JWTs stored in HTTP-only, same-site cookies.
-Mutating requests are restricted to the configured frontend origin.
-CORS allows credentialed requests from the configured origin.
-Project and task access is checked against workspace membership.
-Workspace owners can manage workspace membership.
-Members can create and manage workspace projects and tasks.
-Removing a workspace member unassigns their workspace tasks.
+`npm run test:api` runs the API tests, `npm run lint` checks the frontend, and `npm run build` creates the production frontend bundle.
 
-Email delivery, invitation links, and workspace ownership transfer are not included in the current MVP.
+## Security
 
-Application Settings
+- Passwords are hashed with bcrypt.
+- Authentication tokens are signed JWTs stored in HTTP-only, same-site cookies; cookies are marked Secure in production.
+- Credentialed CORS requests are restricted to the configured `CLIENT_ORIGIN`.
+- Mutating requests are checked against the configured frontend origin.
+- Project and task routes verify workspace membership before granting access.
+- Use a strong random `JWT_SECRET` and a secured MongoDB connection in production.
+- Never commit real `.env` files, credentials, or tokens. The `.gitignore` keeps environment files out while retaining `.env.example`.
 
-The Settings section provides:
+For production, deploy over HTTPS, set `NODE_ENV=production`, configure `CLIENT_ORIGIN` to the exact frontend origin, and use an appropriately secured MongoDB connection. Set `VITE_API_URL` when the API is not available at the frontend's default address.
 
-Signed-in account information.
-Active workspace information.
-Workspace role.
-Light and dark theme preferences.
-TeamFlow MVP information.
+## Future improvements
 
-Theme preferences are saved in the browser's local storage.
+Potential areas to build on include:
 
-Workspace, project, member, and task data refresh automatically every 15 seconds while the application is open. Returning to the browser tab also triggers an immediate refresh.
+- Email-based invitations and password reset.
+- Workspace ownership transfer.
+- Real-time collaboration instead of periodic refresh.
+- Additional project and workspace administration tools.
 
-Deployment
+## Author
 
-For production deployment:
-
-Serve the frontend and backend on the same site where possible.
-Configure a strong, randomly generated JWT_SECRET.
-Set NODE_ENV=production.
-Configure a production MongoDB connection string.
-Set the correct frontend origin.
-Keep all credentials and secrets outside the public repository.
-Author
-
-PatilAdhiraj
+[PatilAdhiraj](https://github.com/PatilAdhiraj)
